@@ -3,10 +3,8 @@ import os
 
 class Word:
 
-    def __init__(self):
-        self.word_type = ""
-
-    def __init__(self,word_type):
+    
+    def __init__(self,word_type=""):
         self.word_type = word_type
 
     def print_word_type(self):
@@ -19,6 +17,6 @@ class Word:
 
 
 
-test = Word()
+#test = Word()
 
-test.printSomething()
+#test.printSomething()
