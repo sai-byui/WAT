@@ -8,18 +8,24 @@ NOUN = "noun"
 CDATA = "cdata"
 UNDEFINED = "UNDEFINED"
 
-class Word:
 
-    word_type = UNDEFINED;
-    
+class _WordTracker(type):
+    _word_dictionary = {}
+    def __init__(cls, name, bases, clsdict):
+        if len(cls.mro()) > 2:
+            print("Word added: " + name)
+            _WordTracker._word_dictionary[name.lower()] = cls
+        super(_WordTracker, cls).__init__(name, bases, clsdict)
+
+class Word:
+    __metaclass__ = _WordTracker
     @staticmethod
     def parse(word_string):
-        #Find the right class word for the string
-        #Create an instance
-        return Word()
-    
+        return _WordTracker._word_dictionary[word_string.lower()]()
+        
     def __init__(self,word_type=UNDEFINED):
-        selfword_type = word_type
+        self.__word_queue = word_type
+        self.__word_type = word_type
 
     #This is where the word is evaluated to read data to
     #build the Action object
@@ -27,7 +33,7 @@ class Word:
         pass
 
     def print_word_type(self):
-        print self.word_type
+        print(self.__word_type)
 
 #test = Word()
 

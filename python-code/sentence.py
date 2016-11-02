@@ -1,7 +1,7 @@
 import os
 from word import Word
 from collections import deque
-
+import nouns
 #################################################################
 # Sentence Class:
 #
