@@ -1,9 +1,22 @@
 import sentence
 
+'''
+Basically, an evaluated sentence
+'''
+
+__author__ = "Brigham Young University - Idaho : Society for Artificial Intelligence"
+
 class Action:
     predicate = Word() #Other names: Action, verb, ???
     direct_object = Word()
-    context = {}
+    context = {} #options for the action
+
+    """
+    Basically, a top-level verb in a sentence becomes the predicate,
+    a top-level noun becomes the direct_object
+    a top-level adverb becomes context?
+    Just my thoughts, ~Logan
+    """
     
     def __init__(sentence):
         #builds the action context

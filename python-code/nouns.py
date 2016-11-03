@@ -1,8 +1,12 @@
 import word
 
+'''
+This module simply contains a list of nouns.
+'''
+
 class Class (word.Word):
-    def __init(self):
-        Word(word.NOUN)
+    def __init__(self):
+        super(self.__class__,self).__init__(word.NOUN)
         
     def create(self,name,**options):
         print("Created class \"%s\"!" % name)
@@ -11,9 +15,9 @@ class Class (word.Word):
 
 class Function (word.Word):
 
-    def __init(self):
-        Word(word.NOUN)
-
+    def __init__(self):
+        super(self.__class__,self).__init__(word.NOUN)
+        
     def create(self,name,**options):
         if(options.get("in_location") == None):
             raise Exception(
@@ -23,11 +27,3 @@ class Function (word.Word):
 
     def define(self,name,**options):
         self.create(name,**options)
-            
-a = Class()
-a.create("Baka!", in_location = "your face")
-a = Function()
-a.define("dance", in_location = "Baka!")
-b = word.Word.parse("Function")
-print(b)
-print(a)

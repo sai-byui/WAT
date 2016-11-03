@@ -1,7 +1,7 @@
 import os
-from word import Word
+from word import Word,CDATA
 from collections import deque
-import nouns
+
 #################################################################
 # Sentence Class:
 #
@@ -11,34 +11,41 @@ import nouns
 # Author: SAI
 #################################################################
 
+'''
+I think python typically uses 3 double/single quotes to indicate a
+"docstring"?
+'''
+
+__author__ = "SAI"
+
 class Sentence:
 
-    # "__" = private
-    __word_queue = [] #A list of Word objects (Not an array!)
-    
-    
-    def __init__(self, word_queue):
+    def __init__(self, sentence_str):
+        '''
+        parses the sentence_str into a sentence
+        '''
+        word_queue = sentence_str.split(" ")
+        #^Should the above be modified to accept multi-word CData as
+        #one word?
         self.__word_queue = [Word.parse(w) for w in word_queue]
-        
+
     def print_sentence(self):
-#        sentence = self.word_queue.__itemsize__
-#        do you mean, itemize? - Testare
+        '''
+        Prints out the sentence as it is understood, with CData in quotes
+        and undefinied words as "(undefined)"        
+        '''
         sentence = ""
         firstWord = True
         for word in self.__word_queue:
-            
-            if firstWord:
-                sentence = word.__class__.__name__
-                firstWord = False
-            else:
-                sentence += " " + word.__class__.__name__.lower()
+            wrd = word.to_str()
+            if word.word_type() == CDATA:
+                wrd =  " \"%s\"" % wrd
+            elif not firstWord:
+                wrd = " " + wrd.lower()
+            firstWord = False
+            sentence += wrd
         sentence += "."
         print(sentence)
 
 
-def form_sentence():
-    word_list = raw_input("Please enter " + " your sentence: ").split(" ");
-    sentence_test = Sentence(word_list);
-    sentence_test.print_sentence()
 
-form_sentence()
