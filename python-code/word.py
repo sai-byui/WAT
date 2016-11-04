@@ -14,6 +14,7 @@ ADJECTIVE = "adjective"
 VERB = "verb"
 NOUN = "noun"
 CDATA = "cdata"
+CDWORD = "cword"
 UNDEFINED = "(undefined)"
 '''
 These are constants that define the role of each word. Considering changing
@@ -25,11 +26,19 @@ dictionary
 _wordLogger = logging.getLogger(__name__)
 '''
 Used for debugging, mostly to list words that have been added to the
- dictionary
+dictionary
 '''
 
 class _WordTracker(type):
+    '''
+    The metaclass for the Word class. It catches when it is subclassed
+    and adds the subclass to the dictionary
+    '''
     _word_dictionary = {}
+    '''
+    The dictionary, hashing from the lowercase name of a Word subclass to
+    that subclass
+    '''
     def __init__(cls, name, bases, clsdict):
         if len(cls.mro()) > 2:
             
@@ -50,7 +59,6 @@ class Word:
     class and it's subclasses. It is used to identify when this class
     is subclassed
     '''
-                
     
     @classmethod
     def ignore(cls,scls):
@@ -74,6 +82,8 @@ class Word:
         into an object of the correct class
         '''
         if CData.regex.match(word_string):
+            if CDWord.word_regex.match(word_string):
+                return CDWord(word_string)
             #If it is CData, it is not in the dictionary
             return CData(word_string)
         elif _WordTracker._word_dictionary:
@@ -127,7 +137,7 @@ class Word:
         if(self._word_type != UNDEFINED):
             return self.__class__.__name__
         return UNDEFINED
-
+    
 @Word.ignore
 class CData(Word):
     '''
@@ -135,7 +145,7 @@ class CData(Word):
     This class is not really a word, but is like a type of word, 
     so it is not added to the dictionary
     '''
-    regex = re.compile("^\".*\"$")
+    regex = re.compile("^(\".*\"|\'.*\')$")
     '''
     This regex determines if information provided is character data
     '''
@@ -147,6 +157,31 @@ class CData(Word):
         '''
         super(self.__class__,self).__init__(CDATA)
         self.str = value[1:-1]
+
+    def to_str(self):
+        '''
+        Modifies to_str to return the character data information rather
+        than the class name.
+        '''
+        return self.str;
+
+@Word.ignore
+class CDWord(Word):
+    '''
+    CData that contains only one word.
+    '''
+
+    def __init__(self,value):
+        '''
+        Overwrites the super constructor
+        sets type to CDWORD and saves the second argument as the character
+        data.
+        '''
+        super(self.__class__,self).__init__(CDWORD)
+        self.str = value[1:-1]
+    
+    word_regex = re.compile("^(\"\S+\"|\'\S+\')$")
+    name_regex = re.compile("^(\"\w\S*\"|\'\w\S*\')$")
 
     def to_str(self):
         '''
