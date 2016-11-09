@@ -29,9 +29,7 @@ class Sentence:
         '''
         parses the sentence_str into a sentence
         '''
-        #strsplit = re.split(" ")
-        
-        strsplit = delim.split(sentence_str)
+        strsplit = Sentence.delim.split(sentence_str)
         word_queue = []
         for i in xrange(0,len(strsplit)):
             if 0 == i % 2:
@@ -40,11 +38,6 @@ class Sentence:
             else:
                 if strsplit[i] != "":
                     word_queue.append("\"" + strsplit[i] + "\"")
-        
-        #word_queue = sentence_str.split(" ")
-        
-        #^Should the above be modified to accept multi-word CData as
-        #one word?
         self.__word_queue = [Word.parse(w) for w in word_queue]
 
     def print_sentence(self):

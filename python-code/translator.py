@@ -1,4 +1,5 @@
 import sys
+import word
 import nouns
 import verbs
 import adverbs

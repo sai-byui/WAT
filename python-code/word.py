@@ -23,6 +23,8 @@ Because otherwise, any homonyms would overwrite one another in the
 dictionary
 '''
 
+#logging.basicConfig(level=logging.DEBUG)
+
 _wordLogger = logging.getLogger(__name__)
 '''
 Used for debugging, mostly to list words that have been added to the
@@ -34,6 +36,8 @@ class _WordTracker(type):
     The metaclass for the Word class. It catches when it is subclassed
     and adds the subclass to the dictionary
     '''
+    
+    
     _word_dictionary = {}
     '''
     The dictionary, hashing from the lowercase name of a Word subclass to
@@ -41,18 +45,39 @@ class _WordTracker(type):
     '''
     def __init__(cls, name, bases, clsdict):
         if len(cls.mro()) > 2:
-            
-            _wordLogger.info("Word found: " + name)
-            _WordTracker._word_dictionary[name.lower()] = cls
+            _WordTracker.add_word(cls,name)
         super(_WordTracker, cls).__init__(name, bases, clsdict)
+        
+    @classmethod
+    def add_word(cls,wordcls,name=None):
+        if None == name:
+            name = wordcls.__name__
+        name = name.lower()
+        _wordLogger.info("Word found: " + name)
+        _WordTracker._word_dictionary[name] = wordcls
 
+def WordType(wordtype):
+    '''
+    This is a decorator for a class used to define the class word type,
+    which would be the default word type of all instances of the class
+    
+    Usage: 
+    @WordType(NOUN)
+    class noun:
+    ...
 
+    wordtype > The type of the word for the class
+    '''
+    def modifyWordTypeTo(cls):
+        cls._class_word_type = wordtype
+        return cls    
+    return modifyWordTypeTo
         
 class Word:
     '''
     The Word class, subclassing this adds it to the dictionary
     '''
-
+    _class_word_type = UNDEFINED
     __metaclass__ = _WordTracker
     '''
     This global variable makes it so that WordTracker can modify this
@@ -94,13 +119,15 @@ class Word:
             return word
             
         
-    def __init__(self,word_type=UNDEFINED):
+    def __init__(self,word_type=None):
         '''
         Currently just sets the type of the word.
         Might want a new method to specify this since
         python calling super initializers is not as easy
         as in other languages, and we'll do it A LOT.
         '''
+        if None == word_type:
+            word_type = self.__class__._class_word_type
         self._word_type = word_type
 
     #This is where the word is evaluated to read data to
@@ -118,6 +145,8 @@ class Word:
         '''
         returns the type of the word
         '''
+        if None == self._word_type:
+            self._word_type = self.__class__._class_word_type
         return self._word_type
     
     def print_word_type(self):
@@ -139,6 +168,7 @@ class Word:
         return UNDEFINED
     
 @Word.ignore
+@WordType(CDATA)
 class CData(Word):
     '''
     Creates a subclass of word that handles character data information
@@ -166,6 +196,7 @@ class CData(Word):
         return self.str;
 
 @Word.ignore
+@WordType(CDWORD)
 class CDWord(Word):
     '''
     CData that contains only one word.

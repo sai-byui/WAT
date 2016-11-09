@@ -1,9 +1,11 @@
-from word import Word,VERB
+from word import Word,VERB,WordType
 
 '''
 This modules contains a bunch of verbs
 '''
 
+@WordType(VERB)
 class Create(Word):
-    def __init__(self):
-        super(self.__class__,self).__init__(VERB);
+    pass
+    #    def __init__(self):
+#        super(self.__class__,self).__init__(VERB);
