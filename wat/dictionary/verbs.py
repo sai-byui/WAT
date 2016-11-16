@@ -1,4 +1,4 @@
-from word import Word,VERB,WordType
+from ..grammar import Word,VERB,WordType
 
 '''
 This modules contains a bunch of verbs

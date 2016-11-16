@@ -1,10 +1,7 @@
 import sys
-import word
-import nouns
-import verbs
-import adverbs
+import dictionary
 import logging
-from sentence import Sentence
+from grammar import Sentence, Action
 
 '''
 Probably the main code running file
@@ -19,6 +16,8 @@ class Translator:
 def form_sentence(sentence_str):
     sentence_test = Sentence(sentence_str);
     sentence_test.print_sentence()
+    Action(sentence_test).perform()
+    
 
 if __name__ == "__main__":
     #This is how we specify that this module is the one being run

@@ -1,4 +1,4 @@
-from word import Word, ADVERB, WordType
+from ..grammar import Word, ADVERB, WordType
 
 '''
 This module is simply a list of adverb words

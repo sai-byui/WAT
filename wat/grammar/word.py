@@ -129,7 +129,15 @@ class Word:
         if None == word_type:
             word_type = self.__class__._class_word_type
         self._word_type = word_type
+        self.properties = {}
 
+
+    def __getitem__(self,key):
+        return self.properties.get(key)
+
+    def __setitem__(self,key,value):
+        self.properties[key] = value
+    
     #This is where the word is evaluated to read data to
     #build the Action object
     def evaluate(self,action,sentence_iterator):
@@ -146,7 +154,8 @@ class Word:
         elif(self.word_type() == NOUN):
             action.direct_object = self
             if(sentence_iterator.peek().word_type() == CDWORD):
-                #give direct object this name and pop it
+                self["name"] = sentence_iterator.pop().to_str()
+                #give direct object this name and pop it                
                 pass
         elif(self.word_type() == ADVERB):
             pass #Adverbs might want to overload this themselves
@@ -154,7 +163,7 @@ class Word:
             if(sentence_iterator.peek().word_type() == NOUN):
                 word = sentence_iterator.pop()
                 word.evaluate(action,sentence_iterator)
-                #By default adjectives don't do anything
+                word[self.__class__.__name__] = True
         else:
             pass #CDWORD, CDATA, ADJECTIVE
 

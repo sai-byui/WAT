@@ -1,6 +1,5 @@
-import grammar
-from grammar import Word,WordType,NOUN
-import abstract
+from ..grammar import Word,WordType,NOUN
+from .. import abstract
 
 '''
 This module simply contains a list of nouns.
@@ -15,7 +14,7 @@ class Class (Word):
         '''
         CREATES A CLASSE!!!!LOL
         '''
-        class_obj = abstract.Class(options.get("name"),options.get("in_location"))
+        class_obj = abstract.Class(self["name"],options.get("in_location"))
         class_obj.create()
 
 @WordType(NOUN)
