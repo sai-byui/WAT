@@ -1,5 +1,6 @@
 import word
 from word import Word,WordType,NOUN
+import abs_class
 
 '''
 This module simply contains a list of nouns.
@@ -10,13 +11,12 @@ class Class (word.Word):
 #    def __init__(self):
 #        super(self.__class__,self).__init__(NOUN)
     
-    def create(self,name,**options):
+    def create(self,**options):
         '''
         CREATES A CLASSE!!!!LOL
         '''
-        print("Created class \"%s\"!" % name)
-        if(options.get("in_location") != None):
-            print("It was in %s" % options.get("in_location"))
+        class_obj = abs_class.Class(options.get("name"),options.get("in_location"))
+        class_obj.create()
 
 @WordType(NOUN)
 class Function (word.Word):

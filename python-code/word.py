@@ -132,14 +132,31 @@ class Word:
 
     #This is where the word is evaluated to read data to
     #build the Action object
-    def evaluate(self,sentence):
+    def evaluate(self,action,sentence_iterator):
         '''
         Should evaluate the word, so that a complete idea is presented
         when an Action is made from a sentence
         (E.G. Sentence 'Create class "Foo"' would evaluate Create and then
         class would read in the next word "Foo" as the class name)
         '''
-        pass
+        if(self.word_type() == VERB):
+            action.predicate = self
+        elif(self.word_type() == UNDEFINED):
+            pass #Might want to change this to throw an error
+        elif(self.word_type() == NOUN):
+            action.direct_object = self
+            if(sentence_iterator.peek().word_type() == CDWORD):
+                #give direct object this name and pop it
+                pass
+        elif(self.word_type() == ADVERB):
+            pass #Adverbs might want to overload this themselves
+        elif(self.word_type() == ADJECTIVE):
+            if(sentence_iterator.peek().word_type() == NOUN):
+                word = sentence_iterator.pop()
+                word.evaluate(action,sentence_iterator)
+                #By default adjectives don't do anything
+        else:
+            pass #CDWORD, CDATA, ADJECTIVE
 
     def word_type(self):
         '''

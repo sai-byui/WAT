@@ -39,6 +39,19 @@ class Sentence:
                 if strsplit[i] != "":
                     word_queue.append("\"" + strsplit[i] + "\"")
         self.__word_queue = [Word.parse(w) for w in word_queue]
+        self._word_delim = 0
+
+    def iter(self):
+        return self.__iter__()
+    
+    def __iter__(self):
+        return SentenceIterator(self)
+
+    def __getitem__(self,index):
+        return self.__word_queue[index]
+
+    def size(self):
+        return len(self.__word_queue)
 
     def print_sentence(self):
         '''
@@ -63,6 +76,29 @@ class Sentence:
         sentence += "."
         print(sentence)
 
+class SentenceIterator:
+    
+    def __init__(self,sentence):
+        self._sentence = sentence
+        self._delim = 0;
+
+    def __iter__(self):
+        return self
+    
+    def next(self):
+        if self._delim == self._sentence.size():
+            raise StopIteration
+        else:
+            return self.pop()
+
+    def pop(self):
+        ret = self.peek()
+        self._delim += 1
+        return ret
+    
+    def peek(self):
+        return self._sentence[self._delim]
+    
 #delim = re.compile("\"|\'")
 
 if "__main__" == __name__:
