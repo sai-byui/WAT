@@ -16,8 +16,8 @@ class Action:
     """
     
     def __init__(self,sentence):
-        self.predicate = Word() #Other names: Action, verb, ???
-        self.direct_object = Word()
+        self.predicate = None #Other names: Action, verb, ???
+        self.direct_object = None
         self.context = {} #options for the action
         
         iterator = sentence.iter()
@@ -32,7 +32,8 @@ class Action:
         pass
 
     def perform(self):
-        getattr(self.direct_object,self.predicate.to_str().lower())()
+        if(self.direct_object != None and self.predicate != None):
+            getattr(self.direct_object,self.predicate.to_str().lower())()
         #use "action" to find the correct method of direct_object
         #call that method using the context provided
         pass            

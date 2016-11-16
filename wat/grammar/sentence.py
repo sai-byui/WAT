@@ -85,18 +85,24 @@ class SentenceIterator:
         return self
     
     def next(self):
-        if self._delim == self._sentence.size():
+        if self.end():
             raise StopIteration
         else:
             return self.pop()
 
+    def end(self):
+        if self._sentence.size() <= self._delim:
+            return True
+        return False
+    
     def pop(self):
         ret = self.peek()
         self._delim += 1
         return ret
     
     def peek(self):
-        return self._sentence[self._delim]
+        return self._sentence[self._delim] if \
+            not self.end() else None
     
 #delim = re.compile("\"|\'")
 

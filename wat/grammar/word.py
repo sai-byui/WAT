@@ -146,6 +146,9 @@ class Word:
         when an Action is made from a sentence
         (E.G. Sentence 'Create class "Foo"' would evaluate Create and then
         class would read in the next word "Foo" as the class name)
+        
+        Intended to be overwritten by subclasses, but provides default
+        behavior.
         '''
         if(self.word_type() == VERB):
             action.predicate = self
@@ -153,11 +156,21 @@ class Word:
             pass #Might want to change this to throw an error
         elif(self.word_type() == NOUN):
             action.direct_object = self
-            if(sentence_iterator.peek().word_type() == CDWORD):
+            if(not sentence_iterator.end() and \
+               sentence_iterator.peek().word_type() == CDWORD):
                 self["name"] = sentence_iterator.pop().to_str()
                 #give direct object this name and pop it                
                 pass
         elif(self.word_type() == ADVERB):
+
+            if action.predicate != None:
+                action.predicate[self.__class__.__name__] = True
+            elif ( not sentence_iterator.end() and \
+            sentence_iterator.peek().word_type() == VERB):
+                verb = sentence_iterator.pop()
+                verb.evaluate(action,sentence_iterator)
+                verb[self.__class__.__name__] = True
+                
             pass #Adverbs might want to overload this themselves
         elif(self.word_type() == ADJECTIVE):
             if(sentence_iterator.peek().word_type() == NOUN):
@@ -165,7 +178,7 @@ class Word:
                 word.evaluate(action,sentence_iterator)
                 word[self.__class__.__name__] = True
         else:
-            pass #CDWORD, CDATA, ADJECTIVE
+            pass #CDWORD, CDATA
 
     def word_type(self):
         '''
