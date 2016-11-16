@@ -1,12 +1,12 @@
-import word
-from word import Word,WordType,NOUN
+import grammar
+from grammar import Word,WordType,NOUN
 import abstract
 
 '''
 This module simply contains a list of nouns.
 '''
 @WordType(NOUN)
-class Class (word.Word):
+class Class (Word):
 
 #    def __init__(self):
 #        super(self.__class__,self).__init__(NOUN)
@@ -19,7 +19,7 @@ class Class (word.Word):
         class_obj.create()
 
 @WordType(NOUN)
-class Function (word.Word):
+class Function (Word):
     
     def create(self,name,**options):
         if(options.get("in_location") == None):
