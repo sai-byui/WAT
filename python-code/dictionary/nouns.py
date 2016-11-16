@@ -1,6 +1,6 @@
 import word
 from word import Word,WordType,NOUN
-import abs_class
+import abstract
 
 '''
 This module simply contains a list of nouns.
@@ -15,7 +15,7 @@ class Class (word.Word):
         '''
         CREATES A CLASSE!!!!LOL
         '''
-        class_obj = abs_class.Class(options.get("name"),options.get("in_location"))
+        class_obj = abstract.Class(options.get("name"),options.get("in_location"))
         class_obj.create()
 
 @WordType(NOUN)
