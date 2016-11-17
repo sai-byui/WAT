@@ -2,17 +2,20 @@ from ..grammar import Word,WordType,NOUN
 from .. import abstract
 
 '''
-This module simply contains a list of nouns.
+This module simply contains a list of nouns we'll likely need.
 '''
+
 @WordType(NOUN)
 class Class (Word):
-
+    '''
+    The noun "class".
+    '''
 #    def __init__(self):
 #        super(self.__class__,self).__init__(NOUN)
     
     def create(self,**options):
         '''
-        CREATES A CLASSE!!!!LOL
+        Creates a abstract.Class object, calls create on it.
         '''
         class_obj = abstract.Class(self["name"],options.get("in_location"))
         class_obj.create()
@@ -20,15 +23,21 @@ class Class (Word):
 @WordType(NOUN)
 class Function (Word):
     
-    def create(self,name,**options):
-        if(options.get("in_location") == None):
+    def create(self,**options):
+        '''
+        Creates a function. Requires that a class location be specified
+        '''
+        if(options.get("in") == None):
             raise Exception(
                 "You need to specify where the function is defined")
         print("Created function %s in class \"%s\"" %
-              (name, options.get("in_location")))
+              (self["name"], options.get("in")))
 
-    def define(self,name,**options):
-        self.create(name,**options)
+    def define(self,**options):
+        '''
+        Synonym for create.
+        '''
+        self.create(**options)
 
 if  "__main__" == __name__:
     a = Class();

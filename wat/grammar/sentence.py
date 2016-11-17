@@ -2,23 +2,22 @@ import os
 import re
 from word import Word,CDATA,CDWORD
 
-#################################################################
-# Sentence Class:
-#
-# Description: This class serves as a data structure for holding
-# pseudo code keywords that will be translated into python code.
-#
-# Author: SAI
-#################################################################
-
 '''
-I think python typically uses 3 double/single quotes to indicate a
-"docstring"?
+This module handles sentences, which parse strings into words and stores
+them. It defines the function of a Sentence object and also an iterator
+for it. 
+
+Basically, mostly handles the parsing of string into a sentence, and then
+it is evaluated in the Action class.
 '''
 
 __author__ = "SAI"
 
 class Sentence:
+    '''
+    This class serves as a data structure containing all the Word objects
+    as they are parsed before they become part of an action.
+    '''
     delim = re.compile("\"|\'")
     '''
     This is a delimiter used in parsing, to identify cdata and cdata words
@@ -41,15 +40,32 @@ class Sentence:
         self._word_delim = 0
 
     def iter(self):
+        '''
+        Returns sentence iterator. It is an iterator that has been modified
+        to allow in-line peeking and popping, so it needs a more public
+        method than __iter__(self)
+        '''
         return self.__iter__()
     
     def __iter__(self):
+        '''
+        Returns SentenceIterator for this sentence, going through it
+        word by word. See the SentenceIterator class.
+        Can be used in for in loops.
+        '''
         return SentenceIterator(self)
 
     def __getitem__(self,index):
+        '''
+        Overloads the brackets [] operator to return the Word at the given
+        index
+        '''
         return self.__word_queue[index]
 
     def size(self):
+        '''
+        How many words are in the sentence
+        '''
         return len(self.__word_queue)
 
     def print_sentence(self):
@@ -76,35 +92,66 @@ class Sentence:
         print(sentence)
 
 class SentenceIterator:
-    
+    '''
+    An iterator for a sentence. In addition to normal iteration, it also
+    has pop and peek methods to check the next word ahead
+    '''
     def __init__(self,sentence):
+        '''
+        Constructor for iterator, taking the sentence to iterate through
+        as the only argument.
+        '''
         self._sentence = sentence
         self._delim = 0;
 
     def __iter__(self):
+        '''
+        Returns itself as an iterator for itself. This way you can use
+        the iterator in a for loop but also keep a reference to it for 
+        using peek and pop.
+        '''
         return self
     
     def next(self):
+        '''
+        Returns the next word in the sentence, the same as pop except for
+        iterator implementation, will raise StopIteration instead of 
+        returning None
+        '''
         if self.end():
             raise StopIteration
         else:
             return self.pop()
 
     def end(self):
+        '''
+        Returns True if the sentence iterator has reached the end,
+        False otherwise.
+        '''
         if self._sentence.size() <= self._delim:
             return True
         return False
     
     def pop(self):
+        '''
+        Returns the next word and moves the iterator to the next element
+        '''
         ret = self.peek()
         self._delim += 1
         return ret
     
     def peek(self):
+        '''
+        Returns the next word without moving the iterator to it. This can
+        be used to determine if the next word is necessary for evaluating
+        the current word.
+
+        E.G., Create Class 'Foo', when Class is evaluated, it peeks ahead.
+        If the next word is a CDWord (Like it is in this case, 'Foo'), then
+        it adds to to the Class word as a property.
+        '''
         return self._sentence[self._delim] if \
             not self.end() else None
-    
-#delim = re.compile("\"|\'")
 
 if "__main__" == __name__:
     str = raw_input("Parse test:")
@@ -117,6 +164,4 @@ if "__main__" == __name__:
             wordsplit.extend(strsplit[i].strip().split(" "))
         else:
             wordsplit.append("\"" + strsplit[i] + "\"")
-
     print(".".join(wordsplit))
-

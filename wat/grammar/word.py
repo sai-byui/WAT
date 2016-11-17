@@ -4,26 +4,37 @@ import re
 
 '''
 This code contains how the Words in a sentence are parsed and loaded,
-so that Word subclasses can be identified from a sentence string.
+so that Word subclasses can be identified from a sentence string, and
+then also a function to evaluate the word into it's place in an Action.
+
+Evaluate is an instance method so it can be overwritten in subclasses for
+more dynamic behavior.
 '''
 
 __author__="SAI"
 
 ADVERB = "adverb"
+'''Specifies an adverb word type'''
 ADJECTIVE = "adjective"
+'''Specifies an adjective word type'''
 VERB = "verb"
+'''Specifies an verb word type'''
 NOUN = "noun"
+'''Specifies an noun word type'''
 CDATA = "cdata"
+'''Specifies a string of multi-word character data'''
 CDWORD = "cword"
+'''Specifies a string of character data, but only one word'''
 UNDEFINED = "(undefined)"
 '''
+Specifies a word's type is undefined (usually cause it is not a recognized
+ word)
+
 These are constants that define the role of each word. Considering changing
 them to bitmasks so that one word could have multiple definitions.
 Because otherwise, any homonyms would overwrite one another in the 
-dictionary
+dictionary. For now we don't have any homonyms though, so there is no need
 '''
-
-#logging.basicConfig(level=logging.DEBUG)
 
 _wordLogger = logging.getLogger(__name__)
 '''
@@ -36,20 +47,33 @@ class _WordTracker(type):
     The metaclass for the Word class. It catches when it is subclassed
     and adds the subclass to the dictionary
     '''
-    
-    
+        
     _word_dictionary = {}
     '''
     The dictionary, hashing from the lowercase name of a Word subclass to
     that subclass
     '''
     def __init__(cls, name, bases, clsdict):
+        '''
+        Is called when Word is subclassed.
+        Adds the name of the class to the dictionary, with a reference
+        to the class. If that word already exists, it is overwritten
+
+        If the subclass has a @Word.ignore decorator, it will remove
+        this reference from the dictionary later. If it overwrote a
+        previously existing word, that word is still removed from the
+        dictionary.
+        '''
         if len(cls.mro()) > 2:
             _WordTracker.add_word(cls,name)
         super(_WordTracker, cls).__init__(name, bases, clsdict)
         
     @classmethod
     def add_word(cls,wordcls,name=None):
+        '''
+        Adds a word to the dictionary, either by name or by the name of 
+        the class
+        '''
         if None == name:
             name = wordcls.__name__
         name = name.lower()
@@ -68,7 +92,11 @@ def WordType(wordtype):
 
     wordtype > The type of the word for the class
     '''
+    
     def modifyWordTypeTo(cls):
+        '''
+        This function modifies the class to a specific word type.
+        '''
         cls._class_word_type = wordtype
         return cls    
     return modifyWordTypeTo
@@ -78,6 +106,12 @@ class Word:
     The Word class, subclassing this adds it to the dictionary
     '''
     _class_word_type = UNDEFINED
+    '''
+    This defines the word type of this class. In Word it is undefined,
+    in subclasses it is changed by the @WordType(..) decorator
+
+    
+    '''
     __metaclass__ = _WordTracker
     '''
     This global variable makes it so that WordTracker can modify this
@@ -133,9 +167,15 @@ class Word:
 
 
     def __getitem__(self,key):
+        '''
+        Gets the property (key) of the word
+        '''
         return self.properties.get(key)
 
     def __setitem__(self,key,value):
+        '''
+        Sets the property (key) of the word
+        '''
         self.properties[key] = value
     
     #This is where the word is evaluated to read data to
@@ -251,8 +291,14 @@ class CDWord(Word):
         self.str = value[1:-1]
     
     word_regex = re.compile("^(\"\S+\"|\'\S+\')$")
+    '''
+    Regular expression that identifies a string as being only one word
+    '''
     name_regex = re.compile("^(\"\w\S*\"|\'\w\S*\')$")
-
+    '''
+    Regular expression that identifies, in addition to only being one word,
+    it is a valid class/variable name.
+    '''
     def to_str(self):
         '''
         Modifies to_str to return the character data information rather

@@ -4,8 +4,12 @@ import logging
 from grammar import Sentence, Action
 
 '''
-Probably the main code running file
+The main running code of the program, probably.
+
+Might later be either renamed "__main__.py" or replaced with a file named __main__.py so that we can simply run the wat package.
 '''
+
+__author__ = "SAI"
 
 class Translator:
     '''
@@ -13,7 +17,10 @@ class Translator:
     '''
     pass
 
-def form_sentence(sentence_str):
+def perform_sentence(sentence_str):
+    '''
+    Takes the sentence string, parses it, evaluates it, and then performs it
+    '''
     sentence_test = Sentence(sentence_str);
     sentence_test.print_sentence()
     Action(sentence_test).perform()
@@ -28,4 +35,4 @@ if __name__ == "__main__":
         sentence_str= " ".join(sys.argv[1:])
     else:
         sentence_str = raw_input("Please enter your sentence: ");
-    form_sentence(sentence_str)
+    perform_sentence(sentence_str)
